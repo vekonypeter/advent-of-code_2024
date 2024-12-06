@@ -1,5 +1,6 @@
 package vp.aoc.day4
 
+import vp.aoc.Cords
 import java.io.File
 import kotlin.properties.Delegates.notNull
 
@@ -36,34 +37,31 @@ private fun List<String>.atCords(cords: Cords): Char = this[cords.y][cords.x]
 private fun List<String>.atCords(cords: List<Cords>): String =
     cords.joinToString("") { "${atCords(it)}" }
 
-private data class Cords(val x: Int, val y: Int) {
+private fun Cords.getPaths() = listOf(
+    // north
+    listOf(this, Cords(x, y - 1), Cords(x, y - 2), Cords(x, y - 3)),
+    // north-east
+    listOf(this, Cords(x + 1, y - 1), Cords(x + 2, y - 2), Cords(x + 3, y - 3)),
+    // east
+    listOf(this, Cords(x + 1, y), Cords(x + 2, y), Cords(x + 3, y)),
+    // south-east
+    listOf(this, Cords(x + 1, y + 1), Cords(x + 2, y + 2), Cords(x + 3, y + 3)),
+    // south
+    listOf(this, Cords(x, y + 1), Cords(x, y + 2), Cords(x, y + 3)),
+    // south-west
+    listOf(this, Cords(x - 1, y + 1), Cords(x - 2, y + 2), Cords(x - 3, y + 3)),
+    // west
+    listOf(this, Cords(x - 1, y), Cords(x - 2, y), Cords(x - 3, y)),
+    // north-west
+    listOf(this, Cords(x - 1, y - 1), Cords(x - 2, y - 2), Cords(x - 3, y - 3)),
+).filter { it.isAllOnMap() }
 
-    fun getPaths() = listOf(
-        // north
-        listOf(this, Cords(x, y - 1), Cords(x, y - 2), Cords(x, y - 3)),
-        // north-east
-        listOf(this, Cords(x + 1, y - 1), Cords(x + 2, y - 2), Cords(x + 3, y - 3)),
-        // east
-        listOf(this, Cords(x + 1, y), Cords(x + 2, y), Cords(x + 3, y)),
-        // south-east
-        listOf(this, Cords(x + 1, y + 1), Cords(x + 2, y + 2), Cords(x + 3, y + 3)),
-        // south
-        listOf(this, Cords(x, y + 1), Cords(x, y + 2), Cords(x, y + 3)),
-        // south-west
-        listOf(this, Cords(x - 1, y + 1), Cords(x - 2, y + 2), Cords(x - 3, y + 3)),
-        // west
-        listOf(this, Cords(x - 1, y), Cords(x - 2, y), Cords(x - 3, y)),
-        // north-west
-        listOf(this, Cords(x - 1, y - 1), Cords(x - 2, y - 2), Cords(x - 3, y - 3)),
-    ).filter { it.isAllOnMap() }
+private fun Cords.getPaths2() = (
+        listOf(Cords(x - 1, y - 1), this, Cords(x + 1, y + 1)) to
+                listOf(Cords(x + 1, y - 1), this, Cords(x - 1, y + 1))
+        )
+    .takeIf { it.first.isAllOnMap() && it.second.isAllOnMap() }
 
-    fun getPaths2() = (
-            listOf(Cords(x - 1, y - 1), this, Cords(x + 1, y + 1)) to
-                    listOf(Cords(x + 1, y - 1), this, Cords(x - 1, y + 1))
-            )
-        .takeIf { it.first.isAllOnMap() && it.second.isAllOnMap() }
+private fun List<Cords>.isAllOnMap(): Boolean = all { it.isOnMap() }
 
-    private fun List<Cords>.isAllOnMap(): Boolean = all { it.isOnMap() }
-
-    private fun isOnMap(): Boolean = x in 0 until WIDTH && y in 0 until HEIGHT
-}
+private fun Cords.isOnMap(): Boolean = x in 0 until WIDTH && y in 0 until HEIGHT
