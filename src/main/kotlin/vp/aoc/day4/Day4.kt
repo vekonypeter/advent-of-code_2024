@@ -1,11 +1,12 @@
 package vp.aoc.day4
 
 import vp.aoc.Cords
+import vp.aoc.findCordsOf
 import java.io.File
 import kotlin.properties.Delegates.notNull
 
-var WIDTH by notNull<Int>()
-var HEIGHT by notNull<Int>()
+private var WIDTH by notNull<Int>()
+private var HEIGHT by notNull<Int>()
 
 fun main() {
     val text = File("src/main/resources/inputs/day4.txt")
@@ -23,10 +24,6 @@ fun main() {
         .count { text.isPathEqualTo(it.first, "MAS") && text.isPathEqualTo(it.second, "MAS") }
     println("PART 2: $res2")
 }
-
-private fun List<String>.findCordsOf(char: Char) = mapIndexed { y, line ->
-    line.mapIndexedNotNull { x, c -> if (c == char) Cords(x, y) else null }
-}.flatten()
 
 private fun String.isEqualOrReverse(other: String) = this == other || this == other.reversed()
 
